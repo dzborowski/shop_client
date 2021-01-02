@@ -1,11 +1,14 @@
-import React from 'react';
+import React from "react";
 
-function App() {
+// css framework
+// router
+// axios
+// mobx
+
+export function App() {
     return (
         <div className="App">
 
         </div>
     );
 }
-
-export default App;
