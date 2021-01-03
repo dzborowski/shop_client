@@ -37,6 +37,7 @@
     ],
     "no-unused-vars": "off",
     "newline-before-return": "error",
-    "require-jsdoc": "off"
+    "require-jsdoc": "off",
+    "no-invalid-this": "off"
   }
 }

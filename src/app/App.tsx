@@ -6,55 +6,91 @@ import {Register} from "../auth/Register";
 import {Account} from "../account/Account";
 import {ProductList} from "../product/productList/ProductList";
 import "./App.scss";
-import {IUser} from "../auth/IUser";
-import {IAuthLoginTokens} from "../auth/IAuthLoginTokens";
 import {Basket} from "../basket/Basket";
+import {IAuthContext} from "../auth/IAuthContext";
+import {ILoggedUser} from "../auth/ILoggedUser";
+import {IAuthLoginTokens} from "../auth/IAuthLoginTokens";
+import {AuthContext} from "../auth/AuthContext";
 
-interface IAuthContext {
-    user: IUser | null;
-    authLoginTokens: IAuthLoginTokens | null;
-}
-
-const authContext = React.createContext<IAuthContext>({
-    user: null,
-    authLoginTokens: null,
-});
 
 interface IProps {}
-interface IState extends IAuthContext {}
+
+interface IState {
+    authContext: IAuthContext;
+}
 
 export class App extends React.Component<IProps, IState> {
+    constructor(props:IProps) {
+        super(props);
+
+        this.state = {
+            authContext: {
+                loggedUser: null,
+                authLoginTokens: null,
+                setLoggedUser: this.setLoggedUser,
+                setAuthLoginTokens: this.setAuthLoginTokens,
+                isLoggedIn: this.isLoggedIn,
+            },
+        };
+    }
+
+    public setLoggedUser = (loggedUser:ILoggedUser) => {
+        this.setState((state) => ({
+            ...state,
+            authContext: {
+                ...state.authContext,
+                loggedUser,
+            },
+        }));
+    };
+
+    public setAuthLoginTokens = (authLoginTokens: IAuthLoginTokens) => {
+        this.setState((state) => ({
+            ...state,
+            authContext: {
+                ...state.authContext,
+                authLoginTokens,
+            },
+        }));
+    };
+
+    public isLoggedIn = () => {
+        return !!this.state.authContext.loggedUser && !!this.state.authContext.authLoginTokens;
+    };
+
     public render() {
         return (
             <div className={"App"}>
-                <Router>
-                    <Header/>
-                    <div className={"content"}>
-                        <Switch>
-                            <Route path="/login">
-                                <Login/>
-                            </Route>
-                            <Route path="/register">
-                                <Register/>
-                            </Route>
-                            <Route path="/account">
-                                <Account/>
-                            </Route>
-                            <Route path="/products">
-                                <ProductList/>
-                            </Route>
-                            {/* <Route path="/products/:productId">*/}
-                            {/*    <ProductCart/>*/}
-                            {/* </Route>*/}
-                            <Route path="/basket">
-                                <Basket/>
-                            </Route>
-                            <Route path="/">
-                                <ProductList/>
-                            </Route>
-                        </Switch>
-                    </div>
-                </Router>
+                <AuthContext.Provider value={this.state.authContext}>
+                    <Router>
+                        <Header/>
+                        <div className={"content"}>
+                            <Switch>
+                                <Route path="/login">
+                                    <Login/>
+                                </Route>
+                                <Route path="/register">
+                                    <Register/>
+                                </Route>
+                                <Route path="/account">
+                                    <Account/>
+                                </Route>
+                                <Route path="/products">
+                                    <ProductList/>
+                                </Route>
+                                {/* <Route path="/products/:productId">*/}
+                                {/*    <ProductCart/>*/}
+                                {/* </Route>*/}
+                                <Route path="/basket">
+                                    <Basket/>
+                                </Route>
+                                <Route path="/">
+                                    <ProductList/>
+                                </Route>
+                            </Switch>
+                        </div>
+                    </Router>
+                </AuthContext.Provider>
             </div>
         );
     }

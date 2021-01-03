@@ -1,14 +1,61 @@
 import React from "react";
 import {Button, Form} from "react-bootstrap";
+import {RouteComponentProps, withRouter} from "react-router";
+import {IAuthLoginCredentials} from "./IAuthLoginCredentials";
+import {AuthService} from "./AuthService";
 
-export class Login extends React.Component {
+interface IProps extends RouteComponentProps{}
+
+interface IState {
+    authLoginCredentials: IAuthLoginCredentials
+}
+
+export const Login = withRouter(class InnerLogin extends React.Component<IProps, IState> {
+    constructor(props:IProps) {
+        super(props);
+
+        this.state = {
+            authLoginCredentials: {
+                email: "jan.kowalski@gmail.com",
+                password: "0okm(IJN",
+            },
+        };
+    }
+
+    protected setAuthLoginCredentialsProperty = (data: Partial<IAuthLoginCredentials>) => {
+        this.setState((state) => ({
+            ...state,
+            authLoginCredentials: {
+                ...state.authLoginCredentials,
+                ...data,
+            },
+        }));
+    }
+
+    protected login = async () => {
+        try {
+            const authLoginTokens = await AuthService.login(this.state.authLoginCredentials);
+            const loggedUser = await AuthService.getLoggedUser();
+            this.props.history.push("/");
+        } catch (error) {
+            alert(error);
+        }
+    }
+
     public render() {
         return (
             <div className={"Login"}>
                 <Form>
                     <Form.Group controlId="formBasicEmail">
                         <Form.Label>Email address</Form.Label>
-                        <Form.Control type="email" placeholder="Enter email"/>
+                        <Form.Control
+                            type="email"
+                            placeholder="Enter email"
+                            value={this.state.authLoginCredentials.email}
+                            onChange={(event) => {
+                                this.setAuthLoginCredentialsProperty({email: event.target.value});
+                            }}
+                        />
                         <Form.Text className="text-muted">
                             We will never share your email with anyone else.
                         </Form.Text>
@@ -16,14 +63,21 @@ export class Login extends React.Component {
 
                     <Form.Group controlId="formBasicPassword">
                         <Form.Label>Password</Form.Label>
-                        <Form.Control type="password" placeholder="Password"/>
+                        <Form.Control
+                            type="password"
+                            placeholder="Password"
+                            value={this.state.authLoginCredentials.password}
+                            onChange={(event) => {
+                                this.setAuthLoginCredentialsProperty({password: event.target.value});
+                            }}
+                        />
                     </Form.Group>
 
-                    <Button variant="primary" type="submit">
-                        Login
+                    <Button variant="primary" onClick={this.login}>
+                        Zaloguj się
                     </Button>
                 </Form>
             </div>
         );
     }
-}
+});
