@@ -9,4 +9,5 @@ export const AuthContext = React.createContext<IAuthContext>({
     setLoggedUser: (loggedUser:ILoggedUser) => {},
     setAuthLoginTokens: (authLoginTokens: IAuthLoginTokens) => {},
     isLoggedIn: () => false,
+    logout: () => {},
 });

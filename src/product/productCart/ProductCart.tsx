@@ -3,12 +3,20 @@ import {Button, Card, ListGroup, ListGroupItem} from "react-bootstrap";
 import "./ProductCart.scss";
 import exampleProductPhoto from "./example_product_photo.jpg";
 import {IProduct} from "../IProduct";
+import {AuthContext} from "../../auth/AuthContext";
+import {IAuthContext} from "../../auth/IAuthContext";
 
 interface IProps {
     product:IProduct
 }
 
 export class ProductCart extends React.Component<IProps> {
+    public static contextType = AuthContext;
+
+    protected get authContext():IAuthContext {
+        return this.context as IAuthContext;
+    }
+
     public render() {
         const {product} = this.props;
 
@@ -23,10 +31,14 @@ export class ProductCart extends React.Component<IProps> {
                     <ListGroupItem>Cena: {product.price} zł</ListGroupItem>
                     <ListGroupItem>Dostępna ilość: {product.availableCopiesQuantity}</ListGroupItem>
                 </ListGroup>
-                <Card.Footer>
-                    <Button variant="primary">Dodaj do koszyka</Button>
-                    {/* <Button variant="success">Zobacz</Button>*/}
-                </Card.Footer>
+
+                {this.authContext.isLoggedIn() ?
+                    <Card.Footer>
+                        <Button variant="primary">Dodaj do koszyka</Button>
+                        {/* <Button variant="success">Zobacz</Button>*/}
+                    </Card.Footer>:
+                    null
+                }
             </Card>
         );
     }

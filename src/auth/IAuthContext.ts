@@ -7,4 +7,5 @@ export interface IAuthContext {
     setLoggedUser: (loggedUser: ILoggedUser) => void;
     setAuthLoginTokens: (authLoginTokens: IAuthLoginTokens) => void;
     isLoggedIn: () => boolean;
+    logout: () => void;
 }

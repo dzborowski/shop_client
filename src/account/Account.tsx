@@ -2,9 +2,22 @@ import React from "react";
 import {AccountDetails} from "./AccountDetails";
 import {Orders} from "./orders/Orders";
 import {Col, Nav, Row, Tab} from "react-bootstrap";
+import {AuthContext} from "../auth/AuthContext";
+import {IAuthContext} from "../auth/IAuthContext";
+import {Redirect} from "react-router";
 
 export class Account extends React.Component {
+    public static contextType = AuthContext;
+
+    protected get authContext():IAuthContext {
+        return this.context as IAuthContext;
+    }
+
     public render() {
+        if (!this.authContext.isLoggedIn()) {
+            return <Redirect to="/" />;
+        }
+
         return (
             <div className={"Account"}>
                 <Tab.Container id="left-tabs-example" defaultActiveKey="first">

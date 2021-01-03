@@ -11,7 +11,8 @@ import {IAuthContext} from "../auth/IAuthContext";
 import {ILoggedUser} from "../auth/ILoggedUser";
 import {IAuthLoginTokens} from "../auth/IAuthLoginTokens";
 import {AuthContext} from "../auth/AuthContext";
-
+import {ApiService} from "../api/ApiService";
+import {AuthService} from "../auth/AuthService";
 
 interface IProps {}
 
@@ -30,8 +31,20 @@ export class App extends React.Component<IProps, IState> {
                 setLoggedUser: this.setLoggedUser,
                 setAuthLoginTokens: this.setAuthLoginTokens,
                 isLoggedIn: this.isLoggedIn,
+                logout: this.logout,
             },
         };
+    }
+
+    public async componentDidMount() {
+        const accessToken = localStorage.getItem("accessToken");
+        const refreshToken = localStorage.getItem("refreshToken");
+
+        if (accessToken && refreshToken) {
+            this.setAuthLoginTokens({accessToken, refreshToken});
+            const loggedUser = await AuthService.getLoggedUser();
+            this.setLoggedUser(loggedUser);
+        }
     }
 
     public setLoggedUser = (loggedUser:ILoggedUser) => {
@@ -45,6 +58,9 @@ export class App extends React.Component<IProps, IState> {
     };
 
     public setAuthLoginTokens = (authLoginTokens: IAuthLoginTokens) => {
+        localStorage.setItem("accessToken", authLoginTokens.accessToken);
+        localStorage.setItem("refreshToken", authLoginTokens.refreshToken);
+        ApiService.api.defaults.headers["Authorization"] = authLoginTokens.accessToken;
         this.setState((state) => ({
             ...state,
             authContext: {
@@ -58,11 +74,25 @@ export class App extends React.Component<IProps, IState> {
         return !!this.state.authContext.loggedUser && !!this.state.authContext.authLoginTokens;
     };
 
+    public logout = () => {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        delete ApiService.api.defaults.headers["Authorization"];
+        this.setState((state) => ({
+            ...state,
+            authContext: {
+                ...state.authContext,
+                loggedUser: null,
+                authLoginTokens: null,
+            },
+        }));
+    }
+
     public render() {
         return (
             <div className={"App"}>
-                <AuthContext.Provider value={this.state.authContext}>
-                    <Router>
+                <Router>
+                    <AuthContext.Provider value={this.state.authContext}>
                         <Header/>
                         <div className={"content"}>
                             <Switch>
@@ -89,8 +119,8 @@ export class App extends React.Component<IProps, IState> {
                                 </Route>
                             </Switch>
                         </div>
-                    </Router>
-                </AuthContext.Provider>
+                    </AuthContext.Provider>
+                </Router>
             </div>
         );
     }

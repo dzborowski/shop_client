@@ -3,6 +3,8 @@ import {Button, Form} from "react-bootstrap";
 import {RouteComponentProps, withRouter} from "react-router";
 import {IAuthLoginCredentials} from "./IAuthLoginCredentials";
 import {AuthService} from "./AuthService";
+import {AuthContext} from "./AuthContext";
+import {IAuthContext} from "./IAuthContext";
 
 interface IProps extends RouteComponentProps{}
 
@@ -11,6 +13,8 @@ interface IState {
 }
 
 export const Login = withRouter(class InnerLogin extends React.Component<IProps, IState> {
+    public static contextType = AuthContext;
+
     constructor(props:IProps) {
         super(props);
 
@@ -35,11 +39,17 @@ export const Login = withRouter(class InnerLogin extends React.Component<IProps,
     protected login = async () => {
         try {
             const authLoginTokens = await AuthService.login(this.state.authLoginCredentials);
+            this.authContext.setAuthLoginTokens(authLoginTokens);
             const loggedUser = await AuthService.getLoggedUser();
+            this.authContext.setLoggedUser(loggedUser);
             this.props.history.push("/");
         } catch (error) {
             alert(error);
         }
+    }
+
+    protected get authContext():IAuthContext {
+        return this.context as IAuthContext;
     }
 
     public render() {
