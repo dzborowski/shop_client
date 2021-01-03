@@ -1,14 +1,33 @@
 import React from "react";
 import {ProductCart} from "../productCart/ProductCart";
 import "./ProductList.scss";
+import {ProductService} from "../ProductService";
+import {IProduct} from "../IProduct";
 
-export class ProductList extends React.Component {
+interface IProps {}
+
+interface IState {
+    products:IProduct[]
+}
+
+export class ProductList extends React.Component<IProps, IState> {
+    constructor(props:IProps) {
+        super(props);
+
+        this.state = {
+            products: [],
+        };
+    }
+
+    public async componentDidMount() {
+        const products = await ProductService.getProducts();
+        this.setState({products});
+    }
+
     public render() {
         return (
             <div className={"ProductList"}>
-                {new Array(10).fill(1).map((product, i) => {
-                    return <ProductCart key={i}></ProductCart>;
-                })}
+                {this.state.products.map((product) => <ProductCart key={product.id} product={product}/>)}
             </div>
         );
     }
