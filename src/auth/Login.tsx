@@ -37,15 +37,11 @@ export const Login = withRouter(class InnerLogin extends React.Component<IProps,
     }
 
     protected login = async () => {
-        try {
-            const authLoginTokens = await AuthService.login(this.state.authLoginCredentials);
-            this.authContext.setAuthLoginTokens(authLoginTokens);
-            const loggedUser = await AuthService.getLoggedUser();
-            this.authContext.setLoggedUser(loggedUser);
-            this.props.history.push("/");
-        } catch (error) {
-            alert(error);
-        }
+        const authLoginTokens = await AuthService.login(this.state.authLoginCredentials);
+        this.authContext.setAuthLoginTokens(authLoginTokens);
+        const loggedUser = await AuthService.getLoggedUser();
+        this.authContext.setLoggedUser(loggedUser);
+        this.props.history.push("/");
     }
 
     protected get authContext():IAuthContext {

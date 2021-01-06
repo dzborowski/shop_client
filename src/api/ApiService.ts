@@ -10,7 +10,11 @@ export class ApiService {
         });
 
         ApiService.api.interceptors.response.use((response) => response, (error) => {
-            console.log("error:", (error));
+            const errorMessage = error?.response?.data?.errorMessage;
+
+            if (errorMessage) {
+                alert(errorMessage);
+            }
 
             return Promise.reject(error);
         });

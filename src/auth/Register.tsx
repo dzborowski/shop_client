@@ -35,12 +35,8 @@ export const Register = withRouter(class InnerRegister extends React.Component<I
     }
 
     protected register = async () => {
-        try {
-            await AuthService.registerUser(this.state.authRegisterUser);
-            this.props.history.push("/login");
-        } catch (error) {
-            alert(error);
-        }
+        await AuthService.registerUser(this.state.authRegisterUser);
+        this.props.history.push("/login");
     }
 
     public render() {

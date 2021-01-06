@@ -40,7 +40,12 @@ export class ProductCart extends React.Component<IProps> {
 
                 {this.authContext.isLoggedIn() ?
                     <Card.Footer>
-                        <Button variant="primary" onClick={this.addProductToBasket}>Dodaj do koszyka</Button>
+                        <Button
+                            variant="primary"
+                            onClick={this.addProductToBasket}
+                            disabled={!this.props.product.availableCopiesQuantity}>
+                            Dodaj do koszyka
+                        </Button>
                         {/* <Button variant="success">Zobacz</Button>*/}
                     </Card.Footer>:
                     null
