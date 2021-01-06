@@ -18,7 +18,6 @@ interface IState {
     products:IProduct[];
 }
 
-
 export const Basket = withRouter(class InnerBasket extends React.Component<IProps, IState> {
     public static contextType = AuthContext;
 

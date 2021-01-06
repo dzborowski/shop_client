@@ -13,6 +13,7 @@ import {IAuthLoginTokens} from "../auth/IAuthLoginTokens";
 import {AuthContext} from "../auth/AuthContext";
 import {ApiService} from "../api/ApiService";
 import {AuthService} from "../auth/AuthService";
+import {Order} from "../account/orders/order/Order";
 
 interface IProps {}
 
@@ -104,6 +105,9 @@ export class App extends React.Component<IProps, IState> {
                                 </Route>
                                 <Route path="/account">
                                     <Account/>
+                                </Route>
+                                <Route path="/orders/:orderId">
+                                    <Order/>
                                 </Route>
                                 <Route path="/products">
                                     <ProductList/>
